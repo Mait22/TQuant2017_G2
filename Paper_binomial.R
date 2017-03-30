@@ -190,16 +190,23 @@ dat.1$SE.m3 <- (dat.1$frq_obs.m1 - dat.1$frq_prd.m3)^2
 dat.1$SE.mb <- (dat.1$frq_obs.m1 - dat.1$frq_prd.mb)^2
 
 RMSE.1 <- data.frame(Model=c(1,2,3, "b"),
-                   SSE=c( sum(dat.1$SE.m1),
+                   SSE=c(sum(dat.1$SE.m1),
                           sum(dat.1$SE.m2),
                           sum(dat.1$SE.m3),
-                          sum(dat.1$SE.mb)),
-                   RMSE=c( sqrt(SSE.m1.1/length(dat.1$frq_obs.m1)),
-                           sqrt(SSE.m2.1/length(dat.1$frq_obs.m1)),
-                           sqrt(SSE.m3.1/length(dat.1$frq_obs.m1)),
-                           sqrt(SSE.mb.1/length(dat.1$frq_obs.m1))),
-                   SST=rep(sum((dat.1$frq_obs.m1 - 
-                                  mean(dat.1$frq_obs.m1))^2), 4))
+                          sum(dat.1$SE.mb)))
+
+RMSE.1$RMSE <- c( sqrt(RMSE.1$SSE[1]/length(dat.1$frq_obs.m1)),
+                  sqrt(RMSE.1$SSE[2]/length(dat.1$frq_obs.m1)),
+                  sqrt(RMSE.1$SSE[3]/length(dat.1$frq_obs.m1)),
+                  sqrt(RMSE.1$SSE[4]/length(dat.1$frq_obs.m1)))
+
+RMSE.1$SST <- rep(sum((dat.1$frq_obs.m1 - 
+                                  mean(dat.1$frq_obs.m1))^2), 4)
+
+RMSE.1$PVAF=c((1 - (RMSE.1$SSE[1]/RMSE.1$SST[1])),
+              (1 - (RMSE.1$SSE[2]/RMSE.1$SST[2])),
+              (1 - (RMSE.1$SSE[3]/RMSE.1$SST[3])),
+              (1 - (RMSE.1$SSE[4]/RMSE.1$SST[4])))
 
 
 # #SST.m1.1 <- sum((dat.1$frq_obs - dat.1$m_distr)^2) 
@@ -212,12 +219,6 @@ RMSE.1 <- data.frame(Model=c(1,2,3, "b"),
 #SST.mb.1 <- sum((dat.1$frq_obs.m1 - mean(dat.1$frq_obs.m1))^2)
 
 #PVAF:
-PVAF.1 <- data.frame(Model=c(1,2,3,"b"),
-                     PVAF=c((1 - (SSE.m1.1/SST.m1.1)),
-                            (1 - (SSE.m2.1/SST.m2.1)),
-                            (1 - (SSE.m3.1/SST.m3.1)),
-                            (1 - (SSE.mb.1/SST.mb.1))))
-
 
 ## AIC, BIC
 b.aic <- function(loglike, nparam){
@@ -262,3 +263,8 @@ aic.1 <- data.frame(Model=c(1,2,3),
                                           t=dat.1$time),
                                 length(max.3$estimate),
                                 length(dat.1$frq_nobs.m1))))
+
+
+
+
+
