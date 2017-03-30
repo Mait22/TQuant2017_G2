@@ -1,0 +1,24 @@
+---
+title: "Documentation"
+author: "Mait22"
+date: "28 February 2016"
+---
+
+### <span style="color: #84BD93">Andmerakenduse kasutusjuhend ja kirjeldus – palume seda enne rakenduse esmast kasutamist lugeda.  </span> 
+
+### <span style="color: #84BD93">Andmerakenduse kasutamiseks palun määra esmalt vasakust paanist analüüside seaded:  </span> 
+-  Lahter **„Anna raportile pealkiri“** annab analüüside põhjal koostatavale Wordi raportile pealkirja. See kuvatakse allalaetava raporti tiitellehel.  
+-  Rippmenüü **„Vali laiemad eelarvutatud võrdlusgrupid (max 12)“** võimaldab võrdlevatesse tabelitesse ja joonistele valida laiemad eelnevalt koostatud analüüsigrupid – sh võrdluse mõne ettevõtte keskmiste näitajatega.  
+-  Lahtrite **„Anna I grupile nimetus“**, **„Vali osakonnad esimesse jaotusesse“** ja **„Vali ametigrupp esimesse jaotusesse”** põhjal saab rakenduse kasutaja ise koostada analüüsigrupi, kombineerides valikuid osakondade ja ametigruppide lõikes. Samuti saab koostatud jaotusele ise nime anda, mis kajastub kõikidel joonistel ja tabelites. Näiteks saab suurema struktuuriüksuse juht määrata oma haldusalasse kuuluvad osakonnad ning piiritleda oma analüüsid vaid ühe ametigrupiga (näiteks teenindajad). Nii saab ta näha oma haldusalas kogu küsimustiku konkreetse ametigrupi töörahulolu-uuringu tulemusi.  
+-  Lahtrite **„Anna II grupile nimetus“**, **„Vali osakonnad teise jaotusesse“** ja **„Vali ametigrupid teise jaotusesse”** loogika on eespool kirjeldatuga sama – nende valikutega saab kasutaja koostada ja nimetada teise analüüsigrupi.  
+-  **Vastajate konfidentsiaalsuse tagamiseks tuuakse rakenduses  koostatud lisavõrdlusgrupp välja vaid juhul, kui selles on 5 või enam vastajat.** Kui vastajaid on viis või vähem, kuvatakse selle kohta viide paanil **„Tulemused alaskaaladel“**.   
+
+### <span style="color: #84BD93">Tulemuste kuvamine:</span> 
+-  **Tulemuste kuvamiseks tee vasakul paanil analüüsi aluseks olevad valikud.**
+-  **Seejärel liigu ühele sisupaanidest (näiteks „Tulemused alaskaaladel“) ning vajuta nuppu „Kinnita parameetrid“**. See käivitab arvutusprotsessi, mille toimumisest annavad teada ekraani paremas ülaservas kuvatavad teated. Nende lakkamisel on selle sisupaani tulemused arvutatud ja kuvatud.   
+-  **Teistele sisupaanidele liikudes käivitub arvutusprotsess automaatselt vastavalt viimati kinnitatud parameetritele.**  
+
+### <span style="color: #84BD93">Wordi raporti koostamine koosneb kolmest sammust:  </span>
+-  Alusta analüüside valikute kinnitamisega. Seejärel käivita analüüsid, sisenedes vähemalt ühele sisupaanile. Arvutuste toimumisest annab teada siniste teadete ilmumine ekraani paremasse ülaserva.  
+-  Vajutades nupule **„Koosta Wordi raport“**, algab Wordi raporti koostamine serveris. Protsessi toimumist saadavad teated ekraani paremas ülaservas. Oota nende teadete lakkamiseni.  
+-  Viimase sammuna saad valminud Wordi raporti oma arvutisse laadida, kasutades nuppu **„Lae Wordi raport alla“**.  
