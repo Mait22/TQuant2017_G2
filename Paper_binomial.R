@@ -1,7 +1,11 @@
-
+###############
+###
+### Model 1,3 seem to work, 2 and b doesnt
+###
+###############
 # Models
 m.b <- function(param, t){
-  (param[2] + param[3]*t)^-param[1]
+  (param[2] + param[3]*t)^(-param[1])
 }
 
 m.a <- m.1 <- function(param, t){
@@ -25,9 +29,9 @@ t <- seq(0.1, 8.1, by=2)
 yt <- rbinom(5, 50, .8)
 yt <- yt[order(yt, decreasing=TRUE)]
 n <- 50
-a <- .4
-b <- 5
-c <- .2
+a <- 0.8
+b <- 2
+c <- .4
 
 dat.n <- 1000
 dat.n2 <- 500
@@ -55,14 +59,20 @@ yi.b <- sapply(t,
 
 ### Likelihoods
 loglike.1 <- function(param, data, t){
-  prob <- sapply(t, 
-                 function(x){
-                   m.1(param, x)})
+  prob <- m.1(param, t)
   prob <- c(prob, 1-prob)
-  -sum(log(sapply(data, 
-                  function(x)
-                  {choose(50, x)})) + data*log(prob))
+  -sum(sapply(data, 
+              function(x)
+              {lchoose(n, x)}) + data*log(prob))
 }
+
+# loglike.1 <- function(param, data, t){
+#   prob <- sapply(t, 
+#                  function(x){
+#                    m.1(param, x)})
+#   prob <- c(prob, 1-prob)
+#   -sum(data*log(prob))
+# }
 
 loglike.2 <- function(param, data, t){
   prob  <- sapply(t, 
@@ -70,9 +80,9 @@ loglike.2 <- function(param, data, t){
                     m.2(param, x)})
   prob <- c(prob, 1-prob) 
   #c((param[2] + t)^-param[1], 1-(param[2] + t)^-param[1])
-  -sum(log(sapply(data, 
+  -sum(sapply(data, 
                   function(x)
-                  {choose(50, x)})) + data*log(prob))
+                  {lchoose(n, x)}) + data*log(prob))
 }
 
 loglike.3 <- function(param, data, t){
@@ -83,7 +93,7 @@ loglike.3 <- function(param, data, t){
   #c((1 + param[2]*t)^-param[1], 1- (1 + param[2]*t)^-param[1])
   -sum(log(sapply(data, 
                   function(x)
-                  {choose(50, x)})) + data*log(prob))
+                  {choose(n, x)})) + data*log(prob))
 }
 
 loglike.b <- function(param, data, t){
@@ -94,20 +104,31 @@ loglike.b <- function(param, data, t){
   # c((param[2] + param[3]*t)^-param[1], 1 - (param[2] + param[3]*t)^-param[1])
   -sum(log(sapply(data, 
                   function(x)
-                  {choose(50, x)})) +  data*log(prob))
+                  {choose(n, x)})) +  data*log(prob))
 }
 
 ## Getting the binomial Coef
 # sapply(x, function(x){choose(50, x)}))
 
 ## maximising likelihood
-max.1 <- nlm(loglike.1, data=c(yi.1, n-yi.1), t=t, p=c(0.5))
+max.1 <- nlm(loglike.1, data=c(yi.1, n-yi.1), t=t, p=c(0.8))
 
-max.2 <- nlm(loglike.2, data=c(yi.2, n-yi.2), t=t, p=c(0.9, 0.5))
+# optim(loglike.1, data=c(yi.1, n-yi.1), t=t, 
+#       p=c(0.8),lower=.1,upper=5)
+# 
+# m.1(5,t)
+# 
+# aa=seq(.1,2,.01)
+# faa <- sapply(aa, function(x){
+#       loglike.1(x, data=c(yi.1, n-yi.1), t=t)})
+# plot(aa,faa,type="l")
 
-max.3 <- nlm(loglike.3, data=c(yi.3, n-yi.3), t=t, p=c(0.5, 0.5))
+max.2 <- nlm(loglike.2, data=c(yi.2, n-yi.2), t=t, p=c(.8, 0.99),
+             iterlim=1000)
 
-max.b <- nlm(loglike.b, data=c(yi.b, n-yi.b), t=t, p=c(0.5, 0.5, 0.5))
+max.3 <- nlm(loglike.3, data=c(yi.3, n-yi.3), t=t, p=c(0.8, 0.5))
+
+max.b <- nlm(loglike.b, data=c(yi.b, n-yi.b), t=t, p=c(0.8, 0.99, 0.2))
 
 ### generating Data
 
@@ -122,6 +143,9 @@ dat.1$prob.m2 <- sapply(dat.1$time,
 dat.1$prob.m3 <- sapply(dat.1$time,
                         function(x){
                           m.3(max.3$estimate, x)})
+dat.1$prob.mb <- sapply(dat.1$time,
+                        function(x){
+                          m.b(max.b$estimate, x)})
 
 dat.1$m_distr <- n*dat.1$prob.m1
 
@@ -130,6 +154,7 @@ dat.1$frq_obs.m1 <- sapply(dat.1$prob.m1,
                              rbinom(1, n, x * error)
                            })
 dat.1$frq_nobs.m1 <- n - dat.1$frq_obs.m1
+
 dat.1$frq_prd.m1 <- sapply(dat.1$prob.m1, 
                            function(x){
                              rbinom(1, n, x)
@@ -138,40 +163,57 @@ dat.1$frq_prd.m2 <- sapply(dat.1$prob.m2,
                            function(x){
                              rbinom(1, n, x)
                            })
-
 dat.1$frq_prd.m3 <- sapply(dat.1$prob.m3, 
                            function(x){
                              rbinom(1, n, x)
                            })
+dat.1$frq_prd.mb <- sapply(dat.1$prob.mb, 
+                           function(x){
+                             rbinom(1, n, x)
+                           })
+
+###########################################
+## Continue with caution
+### There seem to be some kind of error in the computation of the SSE and 
+### espacially on SST (old)
+###########################################
 
 ## RMSE
 # from Tutorial on maximum likelihood estimation
 # In Jae Myung
 dat.1$SE.m1 <- (dat.1$frq_obs.m1 - dat.1$frq_prd.m1)^2
+dat.1$SE.m2 <- (dat.1$frq_obs.m1 - dat.1$frq_prd.m2)^2
+dat.1$SE.m3 <- (dat.1$frq_obs.m1 - dat.1$frq_prd.m3)^2
+dat.1$SE.mb <- (dat.1$frq_obs.m1 - dat.1$frq_prd.mb)^2
+
 
 SSE.m1.1 <- sum(dat.1$SE.m1)
+SSE.m2.1 <- sum(dat.1$SE.m2)
+SSE.m3.1 <- sum(dat.1$SE.m3)
+SSE.mb.1 <- sum(dat.1$SE.mb)
 
 RMSE.m1.1 <- sqrt(SSE.m1.1/length(dat.1$frq_obs.m1))
+RMSE.m2.1 <- sqrt(SSE.m2.1/length(dat.1$frq_obs.m1))
+RMSE.m3.1 <- sqrt(SSE.m3.1/length(dat.1$frq_obs.m1))
+RMSE.mb.1 <- sqrt(SSE.mb.1/length(dat.1$frq_obs.m1))
+
 
 # #SST.m1.1 <- sum((dat.1$frq_obs - dat.1$m_distr)^2) 
 # # ?, seems strange.
 # #
-# # What about
+# # What about (yep, this is the way to go)
 SST.m1.1 <- sum((dat.1$frq_obs.m1 - mean(dat.1$frq_obs.m1))^2)
-# # this averages over the observeations, like a 0 model.
-# # But this could also be achieved by averaging the probability and then computing
-# # n*p?
-# # yeah close
-# mean(dat.1$prob)*50
-# # 30.61481
-# mean(dat.1$frq_obs)
-# # 27.164
-# # Still, for a deviation of .8, through the sampling error, this seems too large a number
+SST.m2.1 <- sum((dat.1$frq_obs.m1 - mean(dat.1$frq_obs.m1))^2)
+SST.m3.1 <- sum((dat.1$frq_obs.m1 - mean(dat.1$frq_obs.m1))^2)
+SST.mb.1 <- sum((dat.1$frq_obs.m1 - mean(dat.1$frq_obs.m1))^2)
 
 #PVAF:
 PVAF.m1.1 <- (1 - (SSE.m1.1/SST.m1.1))
+PVAF.m2.1 <- (1 - (SSE.m2.1/SST.m2.1))
+PVAF.m3.1 <- (1 - (SSE.m3.1/SST.m3.1))
+PVAF.mb.1 <- (1 - (SSE.mb.1/SST.mb.1))
 
-## AIC
+## AIC, BIC
 b.aic <- function(loglike, nparam){
   -2*loglike + 2*nparam
 }
@@ -180,15 +222,28 @@ b.bic <- function(loglike, nparam, sample){
 }
 
 m1.1.aic <- b.aic(loglike.1(param=max.1$estimate, 
-                            data=c(dat.1$frq_obs,
-                                   dat.1$frq_nobs),
-                            t=rep(dat.1$time)),
+                            data=c(dat.1$frq_obs.m1,
+                                   dat.1$frq_nobs.m1),
+                            t=rep(dat.1$time, by=2)),
                   length(max.1$estimate))
 
 m1.1.bic <- b.bic(loglike.1(param=max.1$estimate, 
-                            data=c(dat.1$frq_obs,
-                                   dat.1$frq_nobs),
-                            t=rep(dat.1$time)),
+                            data=c(dat.1$frq_obs.m1,
+                                   dat.1$frq_nobs.m1),
+                            t=rep(dat.1$time, 2)),
                   length(max.1$estimate),
-                  length(dat.1$frq_obs))
-m2.1.aic  
+                  length(dat.1$frq_obs.m1))
+
+
+m3.1.aic <- b.aic(loglike.3(param=max.3$estimate,
+                            data=c(dat.1$frq_obs.m1,
+                                   dat.1$frq_nobs.m1),
+                            t=rep(dat.1$time, by=2)),
+                  length(max.3$estimate))
+m3.1.bic <- b.bic(loglike.3(param=max.3$estimate,
+                            data=c(dat.1$frq_obs.m1,
+                                   dat.1$frq_nobs.m1),
+                            t=rep(dat.1$time, by=2)),
+                  length(max.3$estimate),
+                  length(dat.1$frq_nobs.m1))
+
