@@ -86,25 +86,21 @@ loglike.2 <- function(param, data, t){
 }
 
 loglike.3 <- function(param, data, t){
-  prob  <- sapply(t, 
-                  function(x){
-                    m.3(param, x)})
+  prob <- m.3(param, t)
   prob <- c(prob, 1-prob) 
   #c((1 + param[2]*t)^-param[1], 1- (1 + param[2]*t)^-param[1])
-  -sum(log(sapply(data, 
+  -sum(sapply(data, 
                   function(x)
-                  {choose(n, x)})) + data*log(prob))
+                  {lchoose(n, x)}) + data*log(prob))
 }
 
 loglike.b <- function(param, data, t){
-  prob  <- sapply(t, 
-                  function(x){
-                    m.b(param, x)})
+  prob  <- m.b(param, t)
   prob <- c(prob, 1-prob) 
   # c((param[2] + param[3]*t)^-param[1], 1 - (param[2] + param[3]*t)^-param[1])
-  -sum(log(sapply(data, 
+  -sum(sapply(data, 
                   function(x)
-                  {choose(n, x)})) +  data*log(prob))
+                  {lchoose(n, x)}) +  data*log(prob))
 }
 
 ## Getting the binomial Coef
