@@ -812,8 +812,8 @@ simulator_aicbic <- function(n.sims,
                               "Data from M3 fitted by M3 (RMSE)"
   )
   
-  raw.results.pVaf <- as.data.frame(matrix(rep(NA, times = 10*n.sims),nrow = n.sims,ncol = 10))
-  names(raw.results.pVaf) <- c("Simulation run", 
+  raw.results.pvaf <- as.data.frame(matrix(rep(NA, times = 10*n.sims),nrow = n.sims,ncol = 10))
+  names(raw.results.pvaf) <- c("Simulation run", 
                                "Data from M1 fitted by M1 (PVAF)",
                                "Data from M1 fitted by M2 (PVAF)",
                                "Data from M1 fitted by M3 (PVAF)",
@@ -844,9 +844,34 @@ simulator_aicbic <- function(n.sims,
     yi.1.n <- sapply(data1.n$prob.m1, function(x){rbinom(1, n, x)
       
     })
-    max.1.m1.n <-  nlm(loglike.1, data=c(yi.1.n, n-yi.1.n), t=data1.n$time, p=c(0.8))
+    max.1.m1.n <- nlm(loglike.1, data=c(yi.1.n, n-yi.1.n), t=data1.n$time, p=c(0.8))
     max.1.m2.n <- nlm(loglike.2, data=c(yi.1.n, n-yi.1.n), t=data1.n$time, p=c(.8, 0.99))
     max.1.m3.n <- nlm(loglike.3, data=c(yi.1.n, n-yi.1.n), t=data1.n$time, p=c(0.8, 0.5))
+    
+    #PRED 1-1
+    max.1.m1.n.pred <- data.frame(ID=seq_len(n.total),
+                                  time=rep(t, each=n.total/length(data1.n$time)))
+    max.1.m1.n.pred$prob.m1  <- sapply(max.1.m1.n.pred$time,
+                              function(x){
+                                m.1(max.1.m1.n$estimate, x)})
+    max.1.m1.n.pred <- sapply(max.1.m1.n.pred$prob.m1, function(x){rbinom(1, n, x)})
+
+    #PRED 1-2
+    max.1.m2.n.pred <- data.frame(ID=seq_len(n.total),
+                                  time=rep(t, each=n.total/length(data2.n$time)))
+    max.1.m2.n.pred$prob.m2  <- sapply(max.1.m2.n.pred$time,
+                                       function(x){
+                                         m.2(max.1.m2.n$estimate, x)})
+    max.1.m2.n.pred <- sapply(max.1.m2.n.pred$prob.m2, function(x){rbinom(1, n, x)})
+
+    #PRED 1-3
+    max.1.m3.n.pred <- data.frame(ID=seq_len(n.total),
+                                  time=rep(t, each=n.total/length(data3.n$time)))
+    max.1.m3.n.pred$prob.m3  <- sapply(max.1.m3.n.pred$time,
+                                       function(x){
+                                         m.3(max.1.m3.n$estimate, x)})
+    max.1.m3.n.pred <- sapply(max.1.m3.n.pred$prob.m3, function(x){rbinom(1, n, x)})
+
     
     raw.results.aic[i,"Simulation run"] <- i  
     raw.results.aic[i,"Data from M1 fitted by M1 (AIC)"] <-  aic.new(loglike = loglike.1(max.1.m1.n$estimate,
@@ -876,19 +901,20 @@ simulator_aicbic <- function(n.sims,
                                                                      nparam = length(max.1.m3.n$estimate),sample = length(yi.1.n))
     
     
-    raw.results.rmse[i,"Simulation run"] <- i  
-    raw.results.rmse[i,"Data from M1 fitted by M1 (BIC)"] <-  rmse(loglike = loglike.1(max.1.m1.n$estimate,
-                                                                                         data=c(yi.1.n, n-yi.1.n), t = data1.n$time),
-                                                                     nparam = length(max.1.m1.n$estimate),sample = length(yi.1.n))
+    raw.results.rmse[i,"Simulation run"] <- i
+    raw.results.rmse[i,"Data from M1 fitted by M1 (RMSE)"] <-  rmse(obs = yi.1.n,max.1.m1.n.pred)
+
+    raw.results.rmse[i,"Data from M1 fitted by M2 (RMSE)"] <-  rmse(obs = yi.1.n,max.1.m2.n.pred)
+
+    raw.results.rmse[i,"Data from M1 fitted by M3 (RMSE)"] <-  rmse(obs = yi.1.n,max.1.m3.n.pred)
     
-    raw.results.rmse[i,"Data from M1 fitted by M2 (BIC)"] <-  rmse(loglike = loglike.2(max.1.m2.n$estimate,
-                                                                                         data=c(yi.1.n, n-yi.1.n), t = data1.n$time),
-                                                                     nparam = length(max.1.m2.n$estimate),sample = length(yi.1.n))
     
-    raw.results.rmse[i,"Data from M1 fitted by M3 (BIC)"] <-  rmse(loglike = loglike.3(max.1.m3.n$estimate,
-                                                                                         data=c(yi.1.n, n-yi.1.n), t = data1.n$time),
-                                                                     nparam = length(max.1.m3.n$estimate),sample = length(yi.1.n))
+    raw.results.pvaf[i,"Simulation run"] <- i
+    raw.results.pvaf[i,"Data from M1 fitted by M1 (PVAF)"] <-  pvaf(obs = yi.1.n,max.1.m1.n.pred)
     
+    raw.results.pvaf[i,"Data from M1 fitted by M2 (PVAF)"] <-  pvaf(obs = yi.1.n,max.1.m2.n.pred)
+    
+    raw.results.pvaf[i,"Data from M1 fitted by M3 (PVAF)"] <-  pvaf(obs = yi.1.n,max.1.m3.n.pred)
       
       
       
@@ -898,6 +924,31 @@ simulator_aicbic <- function(n.sims,
     max.2.m1.n <-  nlm(loglike.1, data=c(yi.2.n, n-yi.2.n), t=data2.n$time, p=c(0.8))
     max.2.m2.n <- nlm(loglike.2, data=c(yi.2.n, n-yi.2.n), t=data2.n$time, p=c(.8, 0.99))
     max.2.m3.n <- nlm(loglike.3, data=c(yi.2.n, n-yi.2.n), t=data2.n$time, p=c(0.8, 0.5))
+    
+    #PRED 2-1
+    max.2.m1.n.pred <- data.frame(ID=seq_len(n.total),
+                                  time=rep(t, each=n.total/length(data1.n$time)))
+    max.2.m1.n.pred$prob.m1  <- sapply(max.2.m1.n.pred$time,
+                                       function(x){
+                                         m.1(max.2.m1.n$estimate, x)})
+    max.2.m1.n.pred <- sapply(max.2.m1.n.pred$prob.m1, function(x){rbinom(1, n, x)})
+    
+    # #PRED 2-2
+    max.2.m2.n.pred <- data.frame(ID=seq_len(n.total),
+                                  time=rep(t, each=n.total/length(data2.n$time)))
+    max.2.m2.n.pred$prob.m2  <- sapply(max.2.m2.n.pred$time,
+                                       function(x){
+                                         m.2(max.2.m2.n$estimate, x)})
+    max.2.m2.n.pred <- sapply(max.2.m2.n.pred$prob.m2, function(x){rbinom(1, n, x)})
+    
+    #PRED 2-3
+    max.2.m3.n.pred <- data.frame(ID=seq_len(n.total),
+                                  time=rep(t, each=n.total/length(data3.n$time)))
+    max.2.m3.n.pred$prob.m3  <- sapply(max.2.m3.n.pred$time,
+                                       function(x){
+                                         m.3(max.2.m3.n$estimate, x)})
+    max.2.m3.n.pred <- sapply(max.2.m3.n.pred$prob.m3, function(x){rbinom(1, n, x)})
+    
     
     raw.results.aic[i,"Data from M2 fitted by M1 (AIC)"] <-  aic.new(loglike = loglike.1(max.2.m1.n$estimate,
                                                                                      data=c(yi.2.n, n-yi.2.n), t = data2.n$time),
@@ -925,12 +976,50 @@ simulator_aicbic <- function(n.sims,
                                                                      nparam = length(max.2.m3.n$estimate),sample = length(yi.2.n))
     
     
+    raw.results.rmse[i,"Data from M2 fitted by M1 (RMSE)"] <-  rmse(obs = yi.2.n,max.2.m1.n.pred)
+    
+    raw.results.rmse[i,"Data from M2 fitted by M2 (RMSE)"] <-  rmse(obs = yi.2.n,max.2.m2.n.pred)
+    
+    raw.results.rmse[i,"Data from M2 fitted by M3 (RMSE)"] <-  rmse(obs = yi.2.n,max.2.m3.n.pred)
+    
+    
+    raw.results.pvaf[i,"Data from M2 fitted by M1 (PVAF)"] <-  pvaf(obs = yi.2.n,max.2.m1.n.pred)
+    
+    raw.results.pvaf[i,"Data from M2 fitted by M2 (PVAF)"] <-  pvaf(obs = yi.2.n,max.2.m2.n.pred)
+    
+    raw.results.pvaf[i,"Data from M2 fitted by M3 (PVAF)"] <-  pvaf(obs = yi.2.n,max.2.m3.n.pred)
+    
     yi.3.n <- sapply(data3.n$prob.m3, function(x){rbinom(1, n, x)    
     })
     
     max.3.m1.n <-  nlm(loglike.1, data=c(yi.3.n, n-yi.3.n), t=data3.n$time, p=c(0.8))
     max.3.m2.n <- nlm(loglike.2, data=c(yi.3.n, n-yi.3.n), t=data3.n$time, p=c(.8, 0.99))
     max.3.m3.n <- nlm(loglike.3, data=c(yi.3.n, n-yi.3.n), t=data3.n$time, p=c(0.8, 0.5))
+    
+    #PRED 3-1
+    max.3.m1.n.pred <- data.frame(ID=seq_len(n.total),
+                                  time=rep(t, each=n.total/length(data1.n$time)))
+    max.3.m1.n.pred$prob.m1  <- sapply(max.3.m1.n.pred$time,
+                                       function(x){
+                                         m.1(max.3.m1.n$estimate, x)})
+    max.3.m1.n.pred <- sapply(max.3.m1.n.pred$prob.m1, function(x){rbinom(1, n, x)})
+    
+    #PRED 3-2
+    max.3.m2.n.pred <- data.frame(ID=seq_len(n.total),
+                                  time=rep(t, each=n.total/length(data2.n$time)))
+    max.3.m2.n.pred$prob.m2  <- sapply(max.3.m2.n.pred$time,
+                                       function(x){
+                                         m.2(max.3.m2.n$estimate, x)})
+    max.3.m2.n.pred <- sapply(max.3.m2.n.pred$prob.m2, function(x){rbinom(1, n, x)})
+    
+    #PRED 3-3
+    max.3.m3.n.pred <- data.frame(ID=seq_len(n.total),
+                                  time=rep(t, each=n.total/length(data3.n$time)))
+    max.3.m3.n.pred$prob.m3  <- sapply(max.3.m3.n.pred$time,
+                                       function(x){
+                                         m.3(max.3.m3.n$estimate, x)})
+    max.3.m3.n.pred <- sapply(max.3.m3.n.pred$prob.m3, function(x){rbinom(1, n, x)})
+
     
     raw.results.aic[i,"Data from M3 fitted by M1 (AIC)"] <-  aic.new(loglike = loglike.1(max.3.m1.n$estimate,
                                                                                      data=c(yi.3.n, n-yi.3.n), t = data3.n$time),
@@ -957,11 +1046,28 @@ simulator_aicbic <- function(n.sims,
                                                                                          data=c(yi.3.n, n-yi.3.n), t = data3.n$time),
                                                                      nparam = length(max.3.m3.n$estimate),sample = length(yi.3.n))
     
+    
+    raw.results.rmse[i,"Data from M3 fitted by M1 (RMSE)"] <-  rmse(obs = yi.3.n,max.3.m1.n.pred)
+    
+    raw.results.rmse[i,"Data from M3 fitted by M2 (RMSE)"] <-  rmse(obs = yi.3.n,max.3.m2.n.pred)
+    
+    raw.results.rmse[i,"Data from M3 fitted by M3 (RMSE)"] <-  rmse(obs = yi.3.n,max.3.m3.n.pred)
+    
+    
+    raw.results.pvaf[i,"Data from M3 fitted by M1 (PVAF)"] <-  pvaf(obs = yi.3.n,max.3.m1.n.pred)
+    
+    raw.results.pvaf[i,"Data from M3 fitted by M2 (PVAF)"] <-  pvaf(obs = yi.3.n,max.3.m2.n.pred)
+    
+    raw.results.pvaf[i,"Data from M3 fitted by M3 (PVAF)"] <-  pvaf(obs = yi.3.n,max.3.m3.n.pred)
+    
   }
 
   return_object@raw.results.aic <- raw.results.aic
   return_object@raw.results.bic <- raw.results.bic
+  return_object@raw.results.rmse <- raw.results.rmse
+  return_object@raw.results.pvaf <- raw.results.pvaf
   
+    
   return(return_object)
   
 
