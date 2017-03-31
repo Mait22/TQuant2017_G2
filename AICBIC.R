@@ -7,6 +7,8 @@ bic.new <- function(loglike, nparam, sample){
 
 rmse <- function(obs, pred){
   sqrt(sum((obs - pred)^2) / length(obs))
+  ## or:
+  # sqrt(mean((obs - pred)^2))
 }
 
 pvaf <- function(obs, pred){
