@@ -1,5 +1,20 @@
 ##### Fidning minimum and couting upwards
+### Use this reshape for the wide format
+dat1.l <- reshape(dat.wide, direction="long",
+                  varying = list(2:dim(dat1)[2]))
+names(dat1.l)[names(dat1.l) %in% "run"] <- "sample"
+names(dat1.l)[names(dat1.l) %in% "bla1.1"] <- "y"
+names(dat1.l)[names(dat1.l) %in% "time"] <- "fittedmodel"
+dat1.l$model <- dat1.l$fittedmodel %% 3
+dat1.l$model[dat1.l$model==0] <- 3
+dat1.l$data <- 0
+dat1.l$data[dat1.l$fittedmodel %in% c(1,2,3)] <- 1
+dat1.l$data[dat1.l$fittedmodel %in% c(4,5,6)] <- 2
+dat1.l$data[dat1.l$fittedmodel %in% c(7,8,9)] <- 3
 
+dat1.l <- dat1.l[order(dat1.l$data, dat1.l$sample),]
+
+### Long data
 dat <- expand.grid(data=c(1,2,3),
                    model=c(1,2,3),
                    sample=1:10)
