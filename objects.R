@@ -634,10 +634,10 @@ setClass("simulator.aicbic",
                    raw.results.bic = "data.frame",
                    raw.results.rmse = "data.frame",
                    raw.results.pvaf = "data.frame",
-                   agregated.results.aic = "data.frame",
-                   agregated.results.bic = "data.frame",
-                   agregated.results.rmse = "data.frame",
-                   agregated.results.pvaf = "data.frame"
+                   agregated.results.aic = "matrix",
+                   agregated.results.bic = "matrix",
+                   agregated.results.rmse = "matrix",
+                   agregated.results.pvaf = "matrix"
                    
          )
 )
@@ -1066,6 +1066,54 @@ simulator_aicbic <- function(n.sims,
   return_object@raw.results.bic <- raw.results.bic
   return_object@raw.results.rmse <- raw.results.rmse
   return_object@raw.results.pvaf <- raw.results.pvaf
+  
+  
+  rsp <- function(dtfr){
+    dat1.l <- reshape(dtfr, direction="long",
+                      varying = list(2:dim(dtfr)[2]))
+    names(dat1.l)[names(dat1.l) %in% "Simulation run"] <- "sample"
+    names(dat1.l)[names(dat1.l) %in% names(dtfr)[2]] <- "y"
+    names(dat1.l)[names(dat1.l) %in% "time"] <- "fittedmodel"
+    dat1.l$model <- dat1.l$fittedmodel %% 3
+    dat1.l$model[dat1.l$model==0] <- 3
+    dat1.l$data <- 0
+    dat1.l$data[dat1.l$fittedmodel %in% c(1,2,3)] <- 1
+    dat1.l$data[dat1.l$fittedmodel %in% c(4,5,6)] <- 2
+    dat1.l$data[dat1.l$fittedmodel %in% c(7,8,9)] <- 3
+    
+    dat1.l <- dat1.l[order(dat1.l$data, dat1.l$sample),]
+    return(dat1.l)
+  }
+  
+  mat.min <- matrix(numeric(9), ncol=3, nrow=3)
+  
+  row.names(mat.min) <- c("M1", "M2", "M3")
+  colnames(mat.min) <- c("gM1", "gM2", "gM3")
+  
+  get.min <- function(dat, matr){
+    for(i in unique(dat$data)){
+      for(j in unique(dat$sample)){
+        slct <- dat[dat$data==i & dat$sample==j, c("model", "y")]
+        matr[, i] <- matr[, i] + slct$y %in%  min(slct$y)
+      }
+    }
+    matr.marg <- addmargins(matr)
+    
+    matr  <- round(matr/matr.marg[nrow(matr.marg),
+                                  ncol(matr.marg)-1], 2)
+    
+    return(matr)
+  }
+  
+  return_object@agregated.results.aic <- get.min(rsp(raw.results.aic),
+                                                 mat.min)
+  return_object@agregated.results.bic <- get.min(rsp(raw.results.bic),
+                                                 mat.min)
+  return_object@agregated.results.rmse <- get.min(rsp(raw.results.rmse),
+                                                  mat.min)
+  return_object@agregated.results.pvaf <- get.min(rsp(raw.results.pvaf),
+                                                  mat.min)
+  
   
     
   return(return_object)
