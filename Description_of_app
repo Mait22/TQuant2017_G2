@@ -28,7 +28,7 @@ date: "28 February 2016"
 ## General remarks
 - Mark A. Pitt and Jin Jae Myung stated in their paper 'When a good fit can be bad', published in 'Trends in Cognitive Science' in 2001,
   that when using cognitive models (e.g. models which describe learning rates, memory curves) focussing on good-ness of fit might be insufficient.
-  Taken from the paper:
+  Taken from the paper as a Glossary:
     * Complexity: the property of a model that enables it to fit diverse patterns of data; it is the
 flexibility of a model. Although the number of parameters in a model and its functional form can
 be useful for gauging its complexity, a more accurate and intuitive measure is the number of
