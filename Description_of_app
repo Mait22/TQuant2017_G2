@@ -22,3 +22,24 @@ date: "28 February 2016"
 -  Alusta analüüside valikute kinnitamisega. Seejärel käivita analüüsid, sisenedes vähemalt ühele sisupaanile. Arvutuste toimumisest annab teada siniste teadete ilmumine ekraani paremasse ülaserva.  
 -  Vajutades nupule **„Koosta Wordi raport“**, algab Wordi raporti koostamine serveris. Protsessi toimumist saadavad teated ekraani paremas ülaservas. Oota nende teadete lakkamiseni.  
 -  Viimase sammuna saad valminud Wordi raporti oma arvutisse laadida, kasutades nuppu **„Lae Wordi raport alla“**.  
+
+
+### Dominiks remarks
+- The paper was about discussing model selection based on Goodness of Fit-indices (GoF) (Root Mean squared error ~ RMSE; Percent Variance accounted for ~ PVAF)
+  and model selection based on model complexity (AIC, BIC).
+- While GoF is just concerened with declaring what model has a minimal deviation of its prediction from the observed, 
+  model complexity also factors the complexity of the model (number of parameters) as well sample sizes in case of the BIC
+- Model selection based on GoF should therefor always select the most complex model, while model selection based on complexity should show the true model
+
+- What was done?
+    * Three models were fit to data, Estimates which maximises the likelihood of this data were computed
+    * With those estimates, data was generated, n datapoint per model, also with sampling noise (fraction of true pobability used),
+      to which each of the three models were fit again.
+    * Indices were computed, PVAF, RMSE, AIC, BIC and with them determined which model should have generated the model
+    * this process was repeatet N times, and then a table was generated from which to infer how many times model 
+      would have been selected to have the data generated
+  
+- What was additionally?
+    * Extention of the finding in the paper on linear and polynomial regression, as well as including cross validation.
+
+
