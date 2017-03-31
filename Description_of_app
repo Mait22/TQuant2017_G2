@@ -4,59 +4,12 @@ author: "Mait22"
 date: "28 February 2016"
 ---
 
-### <span style="color: #84BD93">Andmerakenduse kasutusjuhend ja kirjeldus – palume seda enne rakenduse esmast kasutamist lugeda.  </span> 
-
-### <span style="color: #84BD93">Andmerakenduse kasutamiseks palun määra esmalt vasakust paanist analüüside seaded:  </span> 
--  Lahter **„Anna raportile pealkiri“** annab analüüside põhjal koostatavale Wordi raportile pealkirja. See kuvatakse allalaetava raporti tiitellehel.  
--  Rippmenüü **„Vali laiemad eelarvutatud võrdlusgrupid (max 12)“** võimaldab võrdlevatesse tabelitesse ja joonistele valida laiemad eelnevalt koostatud analüüsigrupid – sh võrdluse mõne ettevõtte keskmiste näitajatega.  
--  Lahtrite **„Anna I grupile nimetus“**, **„Vali osakonnad esimesse jaotusesse“** ja **„Vali ametigrupp esimesse jaotusesse”** põhjal saab rakenduse kasutaja ise koostada analüüsigrupi, kombineerides valikuid osakondade ja ametigruppide lõikes. Samuti saab koostatud jaotusele ise nime anda, mis kajastub kõikidel joonistel ja tabelites. Näiteks saab suurema struktuuriüksuse juht määrata oma haldusalasse kuuluvad osakonnad ning piiritleda oma analüüsid vaid ühe ametigrupiga (näiteks teenindajad). Nii saab ta näha oma haldusalas kogu küsimustiku konkreetse ametigrupi töörahulolu-uuringu tulemusi.  
--  Lahtrite **„Anna II grupile nimetus“**, **„Vali osakonnad teise jaotusesse“** ja **„Vali ametigrupid teise jaotusesse”** loogika on eespool kirjeldatuga sama – nende valikutega saab kasutaja koostada ja nimetada teise analüüsigrupi.  
--  **Vastajate konfidentsiaalsuse tagamiseks tuuakse rakenduses  koostatud lisavõrdlusgrupp välja vaid juhul, kui selles on 5 või enam vastajat.** Kui vastajaid on viis või vähem, kuvatakse selle kohta viide paanil **„Tulemused alaskaaladel“**.   
-
-### <span style="color: #84BD93">Tulemuste kuvamine:</span> 
--  **Tulemuste kuvamiseks tee vasakul paanil analüüsi aluseks olevad valikud.**
--  **Seejärel liigu ühele sisupaanidest (näiteks „Tulemused alaskaaladel“) ning vajuta nuppu „Kinnita parameetrid“**. See käivitab arvutusprotsessi, mille toimumisest annavad teada ekraani paremas ülaservas kuvatavad teated. Nende lakkamisel on selle sisupaani tulemused arvutatud ja kuvatud.   
--  **Teistele sisupaanidele liikudes käivitub arvutusprotsess automaatselt vastavalt viimati kinnitatud parameetritele.**  
-
-### <span style="color: #84BD93">Wordi raporti koostamine koosneb kolmest sammust:  </span>
--  Alusta analüüside valikute kinnitamisega. Seejärel käivita analüüsid, sisenedes vähemalt ühele sisupaanile. Arvutuste toimumisest annab teada siniste teadete ilmumine ekraani paremasse ülaserva.  
--  Vajutades nupule **„Koosta Wordi raport“**, algab Wordi raporti koostamine serveris. Protsessi toimumist saadavad teated ekraani paremas ülaservas. Oota nende teadete lakkamiseni.  
--  Viimase sammuna saad valminud Wordi raporti oma arvutisse laadida, kasutades nuppu **„Lae Wordi raport alla“**.  
-
-
-### Dominiks remarks
-## General remarks
-- Mark A. Pitt and Jin Jae Myung stated in their paper 'When a good fit can be bad', published in 'Trends in Cognitive Science' in 2001,
-  that when using cognitive models (e.g. models which describe learning rates, memory curves) focussing on good-ness of fit might be insufficient.
-  Taken from the paper as a Glossary, see Glossary header
-
-
-
-## Paper, App and linear extension
-- The paper was about discussing model selection based on Goodness of Fit-indices (GoF) (Root Mean squared error ~ RMSE; Percent Variance accounted for ~ PVAF)
-  and model selection based on model complexity (AIC, BIC).
-- While GoF is just concerened with declaring what model has a minimal deviation of its prediction from the observed, 
-  model complexity also factors the complexity of the model (number of parameters) as well sample sizes in case of the BIC
-- Model selection based on GoF should therefor always select the most complex model, while model selection based on complexity should show the true model
-
-- What was done?
-    * Three models were fit to data, Estimates which maximises the likelihood of this data were computed
-    * With those estimates, data was generated, n datapoint per model, also with sampling noise (fraction of true pobability used),
-      to which each of the three models were fit again.
-    * Indices were computed, PVAF, RMSE, AIC, BIC and with them determined which model should have generated the model
-    * this process was repeatet N times, and then a table was generated from which to infer how many times model 
-      would have been selected to have the data generated
-  
-- What was additionally?
-    * Extention of the finding in the paper on linear and polynomial regression, as well as including cross validation.
-
-
-# Second tab
+### <span style="color: #84BD93">What we did<\span>
 Anlogous to the paper, we first set initial values for the parameter of the
 probability functions: 
 $$
-M1: \pi_{i} = (1 + t_{i})^{-a}
-M2: \pi_i = (b + t_{i})^{-a}
+M1: \pi_{i} = (1 + t_{i})^{-a}\\
+M2: \pi_i = (b + t_{i})^{-a}\\
 M3: \pi_i = (1 + b*t_{i})^{-a}
 $$
 Then data ist generated using a binomial distribution with $n = 50$, and using
@@ -82,25 +35,30 @@ always go for the model with the best fit towards the data. Using AIC, or BIC
 for example, should allow the user to not only fit the observed data, but also
 select the model which might predict future data better.
 
-# Glossary, from Myung, 2001
-    * Complexity: the property of a model that enables it to fit diverse patterns of data; it is the
+### <span style="color: #84BD93"> Glossary, from Myung, 2001<\span>
+  + Complexity: the property of a model that enables it to fit diverse patterns of data; it is the
 flexibility of a model. Although the number of parameters in a model and its functional form can
 be useful for gauging its complexity, a more accurate and intuitive measure is the number of
 distinct probability distributions that the model can generate by varying its parameters over
 their entire range.
-    * Functional form: the way in which the parameters $(\beta)$ and data (x) are combined in a model’s
+
+  + Functional form: the way in which the parameters $(\beta)$ and data (x) are combined in a model’s
 equation: $y = \betax$ and $y = \beta + x$ have the same number of parameters but different functional forms
 (multiplicative versus additive).
-    * Generalizability: the ability of a model to fit all data samples generated by the same cognitive
+
+  + Generalizability: the ability of a model to fit all data samples generated by the same cognitive
 process, not just the currently observed sample (i.e. the model’s expected GOF with respect to
 new data samples). Generalizability is estimated by combining a model’s GOF with a measure of
 its complexity.
-    * Goodness of fit (GOF): the precision with which a model fits a particular sample of observed
+
+  + Goodness of fit (GOF): the precision with which a model fits a particular sample of observed
 data. The predictions of the model are compared with the observed data. The discrepancy
 between the two is measured in a number of ways, such as calculating the root mean squared
 error between them.
-    * Overfitting: the case where, in addition to fitting the main trends in the data, a model also fits the
+
+  + Overfitting: the case where, in addition to fitting the main trends in the data, a model also fits the
 microvariation from this main trend at each data point.
-    * Parameters: variables in a model’s equation that represent mental constructs or processes;
+
+  + Parameters: variables in a model’s equation that represent mental constructs or processes;
 they are adjusted to improve a model’s fit to data. For example, in the model $y = \betax$, $\beta$ is a
 parameter.
